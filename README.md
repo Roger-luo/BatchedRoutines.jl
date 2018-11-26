@@ -4,10 +4,12 @@
 [![Codecov](https://codecov.io/gh/Roger-luo/BatchedRoutines.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/Roger-luo/BatchedRoutines.jl)
 [![Coveralls](https://coveralls.io/repos/github/Roger-luo/BatchedRoutines.jl/badge.svg?branch=master)](https://coveralls.io/github/Roger-luo/BatchedRoutines.jl?branch=master)
 
+Batched routines (BLAS, LAPACK, etc.) for multi-dimensional arrays. This package provide both CPU and GPU support.
+
 ## Installation
 
 ```julia
-pkg> install BatchedRoutines
+pkg> add BatchedRoutines
 ```
 
 ## Supported Routines
