@@ -1,9 +1,9 @@
 using CUDAapi, Pkg
 
 const config_path = joinpath(@__DIR__, "ext.jl")
+const project_path = joinpath(dirname(@__DIR__), "Project.toml")
 
 function write_to_deps(pkgs...)
-    project_path = joinpath(@__DIR__, "..", "Project.toml")
     project = Pkg.TOML.parsefile(project_path)
 
     for (pkg, uuid) in pkgs
