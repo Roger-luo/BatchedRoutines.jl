@@ -35,9 +35,6 @@ function main()
             "GPUArrays" => "0c68f7d7-f131-5f86-a1c3-88cf8149b2d7"
             )
     end
-
-    Pkg.instantiate()
-    Pkg.resolve()
 end
 
 main()
