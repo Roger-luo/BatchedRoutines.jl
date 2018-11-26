@@ -54,6 +54,10 @@ pkg> add BatchedRoutines
 
 - [x] `batched_tr`
 
+### Conventions
+
+For routines (e.g gemm), we use a prefix batched_ for their corresponding routines in BLAS or LAPACK and they should only define with AbstractArray{T, 3} (batched matrix) or AbstractArray{T, 2} (batched vector).
+
 ## License
 
 MIT
