@@ -10,8 +10,6 @@ include("linalg.jl")
 
 @static if USE_CUDA
     include("cuda/cuda.jl")
-else
-    include("cuda/error.jl")
 end
 
 end # module
