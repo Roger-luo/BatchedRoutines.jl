@@ -1,5 +1,7 @@
 module BatchedRoutines
 
-greet() = print("Hello World!")
+include("blas.jl")
+include("lapack.jl")
+include("linalg.jl")
 
 end # module

@@ -1,6 +1,6 @@
 using BatchedRoutines
 using Test
 
-@testset "BatchedRoutines.jl" begin
-    # Write your own tests here.
+@testset "Testing BLAS" begin
+    include("blas.jl")
 end
