@@ -1,5 +1,11 @@
 .DS_Store
-Manifest.toml
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
+
+# remove after released
+# Manifest.toml
+
+# This should be force updated if needed
+# since our build script will add conditional deps
+Project.toml
