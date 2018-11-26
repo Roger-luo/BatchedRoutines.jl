@@ -1,18 +1,8 @@
-using GPUArrays
-import CuArrays
+struct CUDANotImplementedError <: Exception end
 
-function batched_scal!(A::CuArray{T, 1}, B::CuArray{T, 3}) where T
-    gpu_call(B, (A, B)) do state, A, B
-        batch = @linearidx(A)
-        s = zero(eltype(B))
-        for i in axes(B, 1), j in axes(B, 2)
-            B[i, j, batch] *= A[batch]
-        end
-        return
-    end
-    return B
-end
+Base.show(io::IO, ::CUDANotImplementedError) = print(io, "CUDA version is not implemented")
 
+batched_scal!(A::CuArray{T, 1}, B::CuArray{T, 3}) where T = throw(CUDANotImplementedError())
 
 for (gemm, elty) in
         ((:dgemm_,:Float64),
@@ -22,15 +12,18 @@ for (gemm, elty) in
 
     @eval begin
         function batched_gemm!(transA::AbstractChar, transB::AbstractChar, alpha::($elty), A::CuArray{$elty, 3}, B::CuArray{$elty, 3}, beta::($elty), C::CuArray{$elty, 3})
-            CUBLAS.gemm_strided_batched!(transA, transB, alpha, A, B, beta, C)
+            throw(CUDANotImplementedError())
         end
 
         function batched_gemm(transA::AbstractChar, transB::AbstractChar, alpha::($elty), A::CuArray{$elty, 3}, B::CuArray{$elty, 3})
-            CUBLAS.gemm_strided_batched(transA, transB, alpha, A, B)
+            throw(CUDANotImplementedError())
         end
 
         function batched_gemm(transA::AbstractChar, transB::AbstractChar, A::CuArray{$elty, 3}, B::CuArray{$elty, 3})
-            CUBLAS.gemm_strided_batched(transA, transB, A, B)
+            throw(CUDANotImplementedError())
         end
     end
 end
+
+batched_tr(A::CuArray{T, 3}) where T = throw(CUDANotImplementedError())
+batched_tr!(B::CuArray{T, 1}, A::CuArray{T, 3}) where T = throw(CUDANotImplementedError())

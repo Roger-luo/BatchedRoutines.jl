@@ -1,9 +1,9 @@
 using GPUArrays
 
 # CuArrays#207
-BatchedRoutines.batched_tr(A::CuArray{T, 3}) where T = BatchedRoutines.batched_tr!(similar(A, size(A, 3)), A)
+batched_tr(A::CuArray{T, 3}) where T = BatchedRoutines.batched_tr!(similar(A, size(A, 3)), A)
 
-function BatchedRoutines.batched_tr!(B::CuArray{T, 1}, A::CuArray{T, 3}) where T
+function batched_tr!(B::CuArray{T, 1}, A::CuArray{T, 3}) where T
     gpu_call(B, (A, B)) do state, A, B
         batch = @linearidx(B)
         s = zero(eltype(B))
