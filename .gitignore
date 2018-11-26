@@ -4,7 +4,7 @@
 *.jl.mem
 
 # remove after released
-# Manifest.toml
+Manifest.toml
 
 # This should be force updated if needed
 # since our build script will add conditional deps
