@@ -1,7 +1,11 @@
 module BatchedRoutines
 
+macro __PKGNAME__()
+    return "BatchedRoutines"
+end
+
 const ext = joinpath(dirname(@__DIR__), "deps", "ext.jl")
-isfile(ext) || error("TestCUDA.jl has not been built, please run Pkg.build(\"TestCUDA\").")
+isfile(ext) || error("$(@__PKGNAME__).jl has not been built, please run Pkg.build(\"$(@__PKGNAME__)\").")
 include(ext)
 
 include("blas.jl")
