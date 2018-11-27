@@ -40,7 +40,7 @@ pkg> add BatchedRoutines
 
 ### BLAS Level 3
 
-- [x] `batched_gemm`
+- [x] `batched_gemm` (TODO: use `gemm_batch` when mkl is available)
 - [ ] `batched_symm`
 - [ ] `batched_hemm`
 - [ ] `batched_syrk`
@@ -53,6 +53,10 @@ pkg> add BatchedRoutines
 ### Linear Algebra
 
 - [x] `batched_tr`
+
+### Conventions
+
+For routines (e.g gemm), we use a prefix batched_ for their corresponding routines in BLAS or LAPACK and they should only define with AbstractArray{T, 3} (batched matrix) or AbstractArray{T, 2} (batched vector).
 
 ## License
 

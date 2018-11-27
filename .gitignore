@@ -3,6 +3,9 @@
 *.jl.*.cov
 *.jl.mem
 
+deps/build.log
+deps/ext.jl
+
 # remove after released
 Manifest.toml
 
