@@ -44,7 +44,12 @@ function main()
 
     # update load env
     Pkg.activate(dirname(old_env))
-    Pkg.Operations.up(Pkg.API.Context(), Pkg.PackageSpec[])
+    @info "Building in ENV: $old_env"
+    ctx = Context()
+    pkgs = PackageSpec[]
+    resolve_versions!(ctx, pkgs)
+    new_apply = apply_versions(ctx, pkgs)
+    write_env(ctx) # write env before building
 end
 
 main()
