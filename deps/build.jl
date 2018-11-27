@@ -44,7 +44,7 @@ function main()
 
     # update load env
     Pkg.activate(dirname(old_env))
-    Pkg.resolve()
+    Pkg.Operations.up(Pkg.API.Context(), Pkg.PackageSpec[])
 end
 
 main()
