@@ -29,7 +29,7 @@ function batched_scal!(s::AbstractVector{T}, X::AbstractArray{T, 3}) where T
     X
 end
 
-function batched_dot end
+# TODO: use gemm_batch when mkl is available
 
 function batched_gemm! end
 function batched_gemm end
@@ -73,6 +73,7 @@ for (gemm, elty) in
                 ptrB += size(B, 1) * size(B, 2) * sizeof($elty)
                 ptrC += size(C, 1) * size(C, 2) * sizeof($elty)
             end
+
             C
         end
         function batched_gemm(transA::AbstractChar, transB::AbstractChar, alpha::($elty), A::AbstractArray{$elty, 3}, B::AbstractArray{$elty, 3})

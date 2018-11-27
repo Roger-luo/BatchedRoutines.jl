@@ -40,7 +40,7 @@ pkg> add BatchedRoutines
 
 ### BLAS Level 3
 
-- [x] `batched_gemm`
+- [x] `batched_gemm` (TODO: use `gemm_batch` when mkl is available)
 - [ ] `batched_symm`
 - [ ] `batched_hemm`
 - [ ] `batched_syrk`
