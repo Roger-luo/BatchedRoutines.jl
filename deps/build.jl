@@ -36,8 +36,15 @@ function main()
             )
     end
 
-   Pkg.activate(dirname(@__DIR__))
-   Pkg.resolve()
+    old_env = Base.active_project()
+
+    # update env of the project
+    Pkg.activate(dirname(@__DIR__))
+    Pkg.resolve()
+
+    # update load env
+    Pkg.activate(dirname(old_env))
+    Pkg.resolve()
 end
 
 main()
