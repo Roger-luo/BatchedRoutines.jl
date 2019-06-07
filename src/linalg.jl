@@ -1,5 +1,10 @@
 export batched_tr, batched_tr!
 
+"""
+    batched_tr(A::AbstractArray{T, 3}) where T
+
+Batched version of trace.
+"""
 batched_tr(A::AbstractArray{T, 3}) where T = batched_tr!(A, fill!(similar(A, (size(A, 3), )), 0))
 
 function batched_tr!(A::AbstractArray{T, 3}, B::AbstractVector{T}) where T
