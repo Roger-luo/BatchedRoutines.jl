@@ -13,5 +13,5 @@ function batched_tr!(A::AbstractArray{T, 3}, B::AbstractVector{T}) where T
     @inbounds for k in 1:size(A, 3), i in 1:size(A, 1)
         B[k] += A[i, i, k]
     end
-    B
+    return B
 end
