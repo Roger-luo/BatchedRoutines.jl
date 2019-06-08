@@ -1,6 +1,7 @@
 export batched_scal, batched_scal!, batched_gemm!, batched_gemm
 
 import LinearAlgebra: BLAS
+import LinearAlgebra.BLAS: libblas, liblapack, @blasfunc, BlasInt
 
 # level 1
 """
@@ -25,6 +26,54 @@ function batched_scal!(A::AbstractVector{T}, B::AbstractArray{T, 3}) where T
     end
     return B
 end
+
+
+for (fname, elty, lib) in ((:dsyr_,:Float64,libblas),
+    (:ssyr_,:Float32,libblas),
+    (:zsyr_,:ComplexF64,liblapack),
+    (:csyr_,:ComplexF32,liblapack))
+    @eval begin
+        function batched_syr!(uplo::AbstractChar, α::$elty, x::AbstractArray{$elty, 2}, A::AbstractArray{$elty, 3})
+            @assert !has_offset_axes(A, x)
+            n = checksquare(A)
+            if length(x) != n
+            throw(DimensionMismatch("A has size ($n,$n), x has length $(length(x))"))
+            end
+
+            @iterate_batch $(elty) (x, A) (1, 2) begin
+                ccall((@blasfunc($fname), $lib), Cvoid,
+                (Ref{UInt8}, Ref{BlasInt}, Ref{$elty}, Ptr{$elty},
+                Ref{BlasInt}, Ptr{$elty}, Ref{BlasInt}),
+                uplo, n, α, ptrx,
+                stride(x, 1), ptrA, max(1,stride(A, 2)))
+            end
+            A
+        end
+    end
+end
+
+
+for (fname, elty, relty) in ((:zher_,:ComplexF64, :Float64),
+                             (:cher_,:ComplexF32, :Float32))
+    @eval begin
+        function her!(uplo::AbstractChar, α::$relty, x::AbstractMatrix{$elty}, A::AbstractArray{$elty, 3})
+            @assert !has_offset_axes(A, x)
+            n = checksquare(A)
+            if length(x) != n
+                throw(DimensionMismatch("A has size ($n,$n), x has length $(length(x))"))
+            end
+            @iterate_batch $(elty) (x, A) (1, 2) begin
+                ccall((@blasfunc($fname), libblas), Cvoid,
+                    (Ref{UInt8}, Ref{BlasInt}, Ref{$relty}, Ptr{$elty},
+                    Ref{BlasInt}, Ptr{$elty}, Ref{BlasInt}),
+                    uplo, n, α, x,
+                    stride(x, 1), A, max(1,stride(A,2)))
+            end
+            A
+        end
+    end
+end
+
 
 # TODO: use gemm_batch when mkl is available
 """
@@ -60,7 +109,6 @@ for (gemm, elty) in
             beta::($elty), C::AbstractArray{($elty), 3})
         
             @assert !BLAS.has_offset_axes(A, B, C)
-            @assert size(A, 3) == size(B, 3) == size(C, 3) "batch size mismatch"
             m = size(A, transA == 'N' ? 1 : 2)
             ka = size(A, transA == 'N' ? 2 : 1)
             kb = size(B, transB == 'N' ? 1 : 2)
