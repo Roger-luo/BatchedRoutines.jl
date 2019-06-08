@@ -56,7 +56,7 @@ end
 for (fname, elty, relty) in ((:zher_,:ComplexF64, :Float64),
                              (:cher_,:ComplexF32, :Float32))
     @eval begin
-        function her!(uplo::AbstractChar, α::$relty, x::AbstractMatrix{$elty}, A::AbstractArray{$elty, 3})
+        function batched_her!(uplo::AbstractChar, α::$relty, x::AbstractMatrix{$elty}, A::AbstractArray{$elty, 3})
             @assert !has_offset_axes(A, x)
             n = checksquare(A)
             if length(x) != n
