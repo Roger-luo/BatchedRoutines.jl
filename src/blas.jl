@@ -34,7 +34,7 @@ for (fname, elty, lib) in ((:dsyr_,:Float64,libblas),
     (:csyr_,:ComplexF32,liblapack))
     @eval begin
         function batched_syr!(uplo::AbstractChar, α::$elty, x::AbstractArray{$elty, 2}, A::AbstractArray{$elty, 3})
-            @assert !has_offset_axes(A, x)
+            @assert !Base.has_offset_axes(A, x)
             n = checksquare(A)
             if length(x) != n
             throw(DimensionMismatch("A has size ($n,$n), x has length $(length(x))"))
@@ -57,7 +57,7 @@ for (fname, elty, relty) in ((:zher_,:ComplexF64, :Float64),
                              (:cher_,:ComplexF32, :Float32))
     @eval begin
         function batched_her!(uplo::AbstractChar, α::$relty, x::AbstractMatrix{$elty}, A::AbstractArray{$elty, 3})
-            @assert !has_offset_axes(A, x)
+            @assert !Base.has_offset_axes(A, x)
             n = checksquare(A)
             if length(x) != n
                 throw(DimensionMismatch("A has size ($n,$n), x has length $(length(x))"))
@@ -107,8 +107,8 @@ for (gemm, elty) in
             transA::AbstractChar, transB::AbstractChar,
             alpha::($elty), A::AbstractArray{($elty), 3}, B::AbstractArray{($elty), 3},
             beta::($elty), C::AbstractArray{($elty), 3})
-        
-            @assert !BLAS.has_offset_axes(A, B, C)
+
+            @assert !Base.has_offset_axes(A, B, C)
             m = size(A, transA == 'N' ? 1 : 2)
             ka = size(A, transA == 'N' ? 2 : 1)
             kb = size(B, transB == 'N' ? 1 : 2)
@@ -126,7 +126,7 @@ for (gemm, elty) in
                      transA, transB, m, n,
                      ka, alpha, ptrA, max(1,stride(A,2)),
                      ptrB, max(1,stride(B,2)), beta, ptrC,
-                     max(1,stride(C,2)))    
+                     max(1,stride(C,2)))
             end
             return C
         end
