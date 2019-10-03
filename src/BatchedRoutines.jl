@@ -41,7 +41,6 @@ macro iterate_batch(elty, Xs, dims, f)
     return ex
 end
 
-
 include("blas.jl")
 include("lapack.jl")
 include("linalg.jl")

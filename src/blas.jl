@@ -139,3 +139,39 @@ for (gemm, elty) in
         end
     end
 end
+
+function batched_syrk! end
+function batched_syrk end
+
+for (fname, elty) in ((:dsyrk_,:Float64),
+                      (:ssyrk_,:Float32),
+                      (:zsyrk_,:ComplexF64),
+                      (:csyrk_,:ComplexF32))
+   @eval begin
+       # SUBROUTINE DSYRK(UPLO,TRANS,N,K,ALPHA,A,LDA,BETA,C,LDC)
+       # *     .. Scalar Arguments ..
+       #       REAL ALPHA,BETA
+       #       INTEGER K,LDA,LDC,N
+       #       CHARACTER TRANS,UPLO
+       # *     .. Array Arguments ..
+       #       REAL A(LDA,*),C(LDC,*)
+       function syrk!(uplo::AbstractChar, trans::AbstractChar,
+                      alpha::($elty), A::AbstractVecOrMat{$elty},
+                      beta::($elty), C::AbstractMatrix{$elty})
+           @assert !has_offset_axes(A, C)
+           n = checksquare(C)
+           nn = size(A, trans == 'N' ? 1 : 2)
+           if nn != n throw(DimensionMismatch("C has size ($n,$n), corresponding dimension of A is $nn")) end
+           k  = size(A, trans == 'N' ? 2 : 1)
+
+           ccall((@blasfunc($fname), libblas), Cvoid,
+                 (Ref{UInt8}, Ref{UInt8}, Ref{BlasInt}, Ref{BlasInt},
+                  Ref{$elty}, Ptr{$elty}, Ref{BlasInt}, Ref{$elty},
+                  Ptr{$elty}, Ref{BlasInt}),
+                 uplo, trans, n, k,
+                 alpha, A, max(1,stride(A,2)), beta,
+                 C, max(1,stride(C,2)))
+            C
+        end
+    end
+end
