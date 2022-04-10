@@ -1,7 +1,13 @@
 export batched_scal, batched_scal!, batched_gemm!, batched_gemm
 
 import LinearAlgebra: BLAS
-import LinearAlgebra.BLAS: libblas, liblapack, @blasfunc, BlasInt
+import LinearAlgebra.BLAS: @blasfunc, BlasInt
+@static if VERSION < v"1.7"
+    import LinearAlgebra.BLAS: libblas, liblapack
+else
+    const libblas = BLAS.libblastrampoline
+    const liblapack = BLAS.libblastrampoline
+end
 
 # level 1
 """
@@ -118,7 +124,7 @@ for (gemm, elty) in
             end
 
             @iterate_batch $(elty) A, B, C (2, 2, 2) begin
-            ccall((BLAS.@blasfunc($gemm), BLAS.libblas), Cvoid,
+            ccall((BLAS.@blasfunc($gemm), libblas), Cvoid,
                     (Ref{UInt8}, Ref{UInt8}, Ref{BLAS.BlasInt}, Ref{BLAS.BlasInt},
                      Ref{BLAS.BlasInt}, Ref{$(elty)}, Ptr{$(elty)}, Ref{BLAS.BlasInt},
                      Ptr{$(elty)}, Ref{BLAS.BlasInt}, Ref{$(elty)}, Ptr{$(elty)},
