@@ -1,7 +1,7 @@
 export batched_scal, batched_scal!, batched_gemm!, batched_gemm
 
 import LinearAlgebra: BLAS
-import LinearAlgebra.BLAS: libblas, liblapack, @blasfunc, BlasInt
+import LinearAlgebra.BLAS: libblastrampoline, @blasfunc, BlasInt
 
 # level 1
 """
@@ -28,10 +28,10 @@ function batched_scal!(A::AbstractVector{T}, B::AbstractArray{T, 3}) where T
 end
 
 
-for (fname, elty, lib) in ((:dsyr_,:Float64,libblas),
-    (:ssyr_,:Float32,libblas),
-    (:zsyr_,:ComplexF64,liblapack),
-    (:csyr_,:ComplexF32,liblapack))
+for (fname, elty, lib) in ((:dsyr_,:Float64,libblastrampoline),
+    (:ssyr_,:Float32,libblastrampoline),
+    (:zsyr_,:ComplexF64,libblastrampoline),
+    (:csyr_,:ComplexF32,libblastrampoline))
     @eval begin
         function batched_syr!(uplo::AbstractChar, α::$elty, x::AbstractArray{$elty, 2}, A::AbstractArray{$elty, 3})
             @assert !Base.has_offset_axes(A, x)
@@ -63,7 +63,7 @@ for (fname, elty, relty) in ((:zher_,:ComplexF64, :Float64),
                 throw(DimensionMismatch("A has size ($n,$n), x has length $(length(x))"))
             end
             @iterate_batch $(elty) (x, A) (1, 2) begin
-                ccall((@blasfunc($fname), libblas), Cvoid,
+                ccall((@blasfunc($fname), libblastrampoline), Cvoid,
                     (Ref{UInt8}, Ref{BlasInt}, Ref{$relty}, Ptr{$elty},
                     Ref{BlasInt}, Ptr{$elty}, Ref{BlasInt}),
                     uplo, n, α, x,
@@ -118,7 +118,7 @@ for (gemm, elty) in
             end
 
             @iterate_batch $(elty) A, B, C (2, 2, 2) begin
-            ccall((BLAS.@blasfunc($gemm), BLAS.libblas), Cvoid,
+            ccall((BLAS.@blasfunc($gemm), BLAS.libblastrampoline), Cvoid,
                     (Ref{UInt8}, Ref{UInt8}, Ref{BLAS.BlasInt}, Ref{BLAS.BlasInt},
                      Ref{BLAS.BlasInt}, Ref{$(elty)}, Ptr{$(elty)}, Ref{BLAS.BlasInt},
                      Ptr{$(elty)}, Ref{BLAS.BlasInt}, Ref{$(elty)}, Ptr{$(elty)},
@@ -164,7 +164,7 @@ for (fname, elty) in ((:dsyrk_,:Float64),
            if nn != n throw(DimensionMismatch("C has size ($n,$n), corresponding dimension of A is $nn")) end
            k  = size(A, trans == 'N' ? 2 : 1)
 
-           ccall((@blasfunc($fname), libblas), Cvoid,
+           ccall((@blasfunc($fname), libblastrampoline), Cvoid,
                  (Ref{UInt8}, Ref{UInt8}, Ref{BlasInt}, Ref{BlasInt},
                   Ref{$elty}, Ptr{$elty}, Ref{BlasInt}, Ref{$elty},
                   Ptr{$elty}, Ref{BlasInt}),
