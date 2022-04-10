@@ -124,7 +124,7 @@ for (gemm, elty) in
             end
 
             @iterate_batch $(elty) A, B, C (2, 2, 2) begin
-            ccall((BLAS.@blasfunc($gemm), BLAS.libblas), Cvoid,
+            ccall((BLAS.@blasfunc($gemm), libblas), Cvoid,
                     (Ref{UInt8}, Ref{UInt8}, Ref{BLAS.BlasInt}, Ref{BLAS.BlasInt},
                      Ref{BLAS.BlasInt}, Ref{$(elty)}, Ptr{$(elty)}, Ref{BLAS.BlasInt},
                      Ptr{$(elty)}, Ref{BLAS.BlasInt}, Ref{$(elty)}, Ptr{$(elty)},
