@@ -1,7 +1,7 @@
 name = "BatchedRoutines"
 uuid = "a9ab73d0-e05c-5df1-8fde-d6a4645b8d8e"
 authors = ["Roger-luo <hiroger@qq.com>"]
-version = "0.2.1"
+version = "0.2.2"
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
